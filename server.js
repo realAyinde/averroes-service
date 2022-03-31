@@ -1,11 +1,28 @@
-const express = require('express')
-const app = express()
-const PORT = process.env.PORT || 3000
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
 
-app.get('/', (req, res) => {
-  res.send('Averroes!')
-})
+const app = express();
+
+var corsOptions = {
+  origin: "http://localhost:1234",
+};
+
+app.use(cors(corsOptions));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// database
+const db = require("./app/models");
+db.sequelize.sync();
+// db.sequelize.sync({ force: true }).then(() => {
+//   console.log("Drop and re-sync db.");
+// });
+
+const PORT = process.env.PORT || 8080;
+
+require("./app/routes")(app);
 
 app.listen(PORT, () => {
-  console.log(`Averroes service listening on port localhost:${PORT}`)
-})
+  console.log(`Server is running on port ${PORT}.`);
+});
